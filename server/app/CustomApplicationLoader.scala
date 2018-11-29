@@ -4,6 +4,7 @@ import core.metrics.MetricsFilter
 import play.api.http.HttpErrorHandler
 import play.api.{ApplicationLoader, BuiltInComponentsFromContext, LoggerConfigurator}
 import cdd.clients.GithubClient
+import cdd.services.FigmaService
 
 import play.filters.HttpFiltersComponents
 import play.api.i18n._
@@ -51,10 +52,12 @@ class CustomComponents(context: ApplicationLoader.Context)
   override lazy val httpErrorHandler: HttpErrorHandler = new core.api.HttpErrorHandler()(messagesApi)
   lazy val githubToken = configuration.get[String]("github.token")
   lazy val githubClient = new GithubClient(wsClient, githubToken)
+  lazy val figmaService = new FigmaService(wsClient, conf)
 
   lazy val router: Router = new Routes(
     httpErrorHandler,
     new cdd.controllers.GithubController(controllerComponents, githubClient),
+    new cdd.controllers.FigmaController(controllerComponents, figmaService),
     new core.controllers.XAssets(environment, httpErrorHandler, assetsMetadata, controllerComponents),
     new front.StateController(controllerComponents)
     // new user.controllers.HomeController(controllerComponents, jsMessages)
