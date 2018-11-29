@@ -4,7 +4,7 @@ import './HomePage.css'
 
 export class HomePage extends React.Component<{}> {
   render() {
-    return (<div> Home </div>
+    return (<div className="homepage-container"> Home </div>
     )
   }
 }
