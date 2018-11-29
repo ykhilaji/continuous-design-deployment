@@ -12,4 +12,7 @@ class GithubController(cc: ControllerComponents, ghc: GithubClient) extends Abst
   def getRepo(owner: String, projectName: String) = Action.async {
     ghc.getRepo(owner, projectName).map(x => Ok(Json.toJson(x)))
   }
+  def getBranches(owner: String, projectName: String) = Action.async {
+    ghc.branches(owner, projectName).map(x => Ok(Json.toJson(x)))
+  }
 }
