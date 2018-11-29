@@ -1,4 +1,5 @@
 GET     /api/repos                            cdd.controllers.GithubController.listRepos
+GET     /api/repos/:owner/:projectName        cdd.controllers.GithubController.getRepo(owner: String, projectName: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /favicon.ico                          core.controllers.XAssets.favicon
