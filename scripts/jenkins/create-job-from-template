@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+import argparse
+import importlib
+import os, subprocess, sys, shlex
+
+def make_job_config(template_file, conf):
+  with open(template_file, 'r') as file:
+    content = file.read()
+    for key, value in conf.items():
+      content = content.replace(key, value)
+    return content
+
+def create_job_jenkins(job_name, config_xml, env_config):
+  print("Creating %s job in jenkins %s" % (job_name, env_config['jenkins_url']))
+  cmd = 'curl --fail --silent --show-error -u "{user}:{pass}" -X POST {url}/createItem?name={jobname} -H "Content-Type:text/xml" --data-binary @-'
+  data = {
+    'user': env_config['api_user'],
+    'pass': env_config['api_token'],
+    'url': env_config['jenkins_url'],
+    'jobname': job_name
+  }
+  cmd = cmd.format(**data)
+  p = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE)
+  p.communicate(input=config_xml)
+  ret = p.wait()
+  if ret != 0:
+    sys.exit(ret)
+  print("Job %s created on jenkins" % job_name)
+
+def get_config():
+  # Get the env var from the file env.sh
+  jenkins_url = os.environ['JENKINS_URL']
+  api_user = os.environ['API_USER']
+  api_token = os.environ['API_TOKEN']
+  if jenkins_url is None or api_user is None or api_token is None:
+    dirname = os.path.dirname(__file__)
+    env_file = os.path.join(dirname, 'env.sh')
+    cmd = 'source %s && %s %s' % (env_file, __file__, ' '.join(sys.argv))
+    ret = subprocess.call(cmd, stdout = sys.stdout, sdterr = sys.stderr)
+    sys.exit(ret)
+  else:
+    return {
+      'jenkins_url': jenkins_url,
+      'api_user': api_user,
+      'api_token': api_token
+    }
+
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser(description='Create Jenkins job from xml template')
+  parser.add_argument('job_name', metavar='<job-name>', help='The jenkins job name to create')
+  parser.add_argument('job_template', metavar='job-template.xml', help='The jenkins xml template for the job')
+  parser.add_argument('config', metavar='template-config.py', help='The configuration to use')
+  args = parser.parse_args()
+
+  env_config = get_config()
+
+  conf_module = importlib.import_module(args.config.replace('.py', ''))
+
+  print("Will use config %s" % conf_module.conf)
+
+  job_config = make_job_config(args.job_template, conf_module.conf)
+
+  if job_config is None:
+    print("Error")
+    sys.exit(1)
+
+  print("Job Config made")
+
+  create_job_jenkins(args.job_name, job_config, env_config)

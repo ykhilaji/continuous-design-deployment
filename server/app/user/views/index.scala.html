@@ -1,0 +1,19 @@
+@(initData: play.api.libs.json.JsValue)
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>TEMPLATE front</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <link rel="stylesheet" href="@core.controllers.routes.XAssets.versioned("app.css")" />
+    <link rel="shortcut icon" type="image/png" href="@core.controllers.routes.XAssets.versioned("img/favicon.png")">
+  </head>
+
+  <body></body>
+
+  <script id="init-data" data="@initData"></script>
+  <script src="@user.controllers.routes.HomeController.jsMessages"></script>
+  <script src="@core.controllers.routes.XAssets.versioned("app.js")"></script>
+</html>

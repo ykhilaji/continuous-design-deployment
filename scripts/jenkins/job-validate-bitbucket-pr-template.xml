@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Test and validate PR</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>7</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.5">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>git@bitbucket.org:${repositoryOwner}/${repositoryName}.git</url>
+        <credentialsId>bot_jenkins</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/${sourceBranch}</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions>
+      <hudson.plugins.git.extensions.impl.WipeWorkspace/>
+      <hudson.plugins.git.extensions.impl.PreBuildMerge>
+        <options>
+          <mergeRemote>origin</mergeRemote>
+          <mergeTarget>${targetBranch}</mergeTarget>
+          <mergeStrategy>default</mergeStrategy>
+          <fastForwardMode>NO_FF</fastForwardMode>
+        </options>
+      </hudson.plugins.git.extensions.impl.PreBuildMerge>
+    </extensions>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <bitbucketpullrequestbuilder.bitbucketpullrequestbuilder.BitbucketBuildTrigger plugin="bitbucket-pullrequest-builder@1.4.25">
+      <spec>* * * * *</spec>
+      <cron>* * * * *</cron>
+      <credentialsId></credentialsId>
+      <username>zen_jenkin</username>
+      <password>inGX8GBCr2nFRW7V</password>
+      <repositoryOwner>@BITBUCKET_REPO_OWNER@</repositoryOwner>
+      <repositoryName>@BITBUCKET_REPO_NAME@</repositoryName>
+      <branchesFilter></branchesFilter>
+      <branchesFilterBySCMIncludes>false</branchesFilterBySCMIncludes>
+      <ciKey>zen-jenkins-develop-pr</ciKey>
+      <ciName>Zen Jenkins</ciName>
+      <ciSkipPhrases></ciSkipPhrases>
+      <checkDestinationCommit>false</checkDestinationCommit>
+      <approveIfSuccess>true</approveIfSuccess>
+      <cancelOutdatedJobs>false</cancelOutdatedJobs>
+      <commentTrigger>test this please</commentTrigger>
+    </bitbucketpullrequestbuilder.bitbucketpullrequestbuilder.BitbucketBuildTrigger>
+  </triggers>
+  <concurrentBuild>true</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>@TEST_SCRIPT@</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>@CI_BUILD_SCRIPT@</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+# Script deploy on CephFS version file
+set -e
+
+echo &quot;Put QA archive&quot;
+curl -F &quot;expiration_date=$(date +%Y-%m-%d -d &apos;+1 days&apos;)&quot; \
+     -F &quot;document=@qa-$BUILD_TAG.tgz&quot; \
+     https://jenkins:jpJ2MaK5tj1Qs0srHcrTh@share.znx.fr/api/document/
+
+echo &quot;Archive available at https://storage.nestincloud.io/smd/qa-$BUILD_TAG.tgz&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.junit.JUnitResultArchiver plugin="junit@1.20">
+      <testResults>target/test-reports/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <healthScaleFactor>1.0</healthScaleFactor>
+      <allowEmptyResults>true</allowEmptyResults>
+    </hudson.tasks.junit.JUnitResultArchiver>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.18">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>20</timeoutMinutes>
+      </strategy>
+      <operationList/>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.4.3">
+      <colorMapName>xterm</colorMapName>
+    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
+  </buildWrappers>
+</project>

@@ -1,0 +1,58 @@
+{
+  "extends": ["tslint:recommended", "tslint-react"],
+  "rules": {
+    "arrow-parens": false,
+    "indent": [ true, "spaces", 2 ],
+    "interface-name": false,
+    "interface-over-type-literal": false,
+    "match-default-export-name": false,
+    "member-access": false,
+    "no-any": false,
+    "no-default-export": true,
+    "no-empty-interface": false,
+    "no-namespace": false,
+    "no-switch-case-fall-through": true,
+    "no-trailing-whitespace": true,
+    "no-unused-expression": [false, "allow-fast-null-checks"],
+    "no-unused-variable": false,
+    "no-var-requires": false,
+    "object-literal-sort-keys": false,
+    "one-variable-per-declaration": [true],
+    "ordered-imports": false,
+    "quotemark": [true, "single", "jsx-double"],
+    "semicolon": ["always", "ignore-interfaces"],
+    "trailing-comma": false,
+    "triple-equals": true,
+    "no-console": false,
+
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      }
+    ],
+
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-rest-spread",
+      "check-type",
+      "check-typecast",
+      "check-type-operator",
+      "check-preblock"
+    ],
+
+    // enable tslint-react rules here
+    "jsx-no-lambda": false,
+    "jsx-curly-spacing": [2, "always"],
+    "jsx-no-multiline-js": false
+  }
+}
