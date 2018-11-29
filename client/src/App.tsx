@@ -1,33 +1,28 @@
-import { GoogleMap, Marker } from 'react-google-maps'
-import withGoogleMap from 'react-google-maps/lib/withGoogleMap'
-import withScriptjs from 'react-google-maps/lib/withScriptjs'
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
 
-import * as React from 'react';
-import { Link } from 'react-router-dom'
-import { Redirect, Route, Switch } from 'react-router'
-
-import './App.css'
-
-import { HomePage } from 'src/HomePage'
-
-export class App extends React.Component {
-  public render() {
+class App extends Component {
+  render() {
     return (
-      <div className="app-container">
-        <Header/>
-        <Switch>
-          <Route exact={ true } path="/home" render={ () => <HomePage/> } />
-        </Switch>
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <p>
+            Edit <code>src/App.js</code> and save to reload.
+          </p>
+          <a
+            className="App-link"
+            href="https://reactjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn React
+          </a>
+        </header>
       </div>
     );
   }
 }
 
-const Header = () => {
-  return (
-    <div className="header">
-      <Link to="/home" > <img src="./assets/logo.png" alt="logo-site"/> </Link>
-      <Link to="/" > CDD </Link>
-    </div>
-  )
-}
+export default App;
