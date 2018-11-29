@@ -1,4 +1,4 @@
-GET     /repos                                cdd.controllers.GithubController.listRepos
+GET     /api/repos                            cdd.controllers.GithubController.listRepos
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /favicon.ico                          core.controllers.XAssets.favicon
