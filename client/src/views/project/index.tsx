@@ -1,7 +1,11 @@
 import React from "react"
 
+import NavigationBar from "../../components/NavigationBar"
+
 interface Props {}
 
 export default function(props: Props) {
-  return <h1>Hello</h1>
+  return <>
+      <NavigationBar />
+    </>
 }
