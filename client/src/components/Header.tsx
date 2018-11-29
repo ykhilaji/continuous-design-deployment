@@ -1,6 +1,6 @@
 import React from "react"
 import { Flex, Text, Box, Image, Button } from "rebass"
-import Container from "./Component"
+import Container from "./Container"
 
 import Logo from "./Logo.svg"
 

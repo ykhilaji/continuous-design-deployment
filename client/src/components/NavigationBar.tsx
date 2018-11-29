@@ -1,6 +1,6 @@
 import React from "react"
 import { Flex, Text, Image } from "rebass"
-import Container from "./Component"
+import Container from "./Container"
 
 export default function() {
   return (
