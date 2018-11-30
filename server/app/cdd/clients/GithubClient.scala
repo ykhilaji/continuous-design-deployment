@@ -98,9 +98,9 @@ class GithubClient(ws: WSClient, githubToken: String) {
       s"/repos/$owner/$projectName/pulls",
       JsObject(
         Seq(
-          "title" -> JsString(s"Assets branch $branchName into master"),
+          "title" -> JsString(s"Assets branch $branchName into master-test"),
           "head" -> JsString(branchName),
-          "base" -> JsString("master")
+          "base" -> JsString("master-test")
         )
       )
     ).flatMap(res => {
@@ -108,8 +108,6 @@ class GithubClient(ws: WSClient, githubToken: String) {
           s"/repos/$owner/$projectName/pulls/${(res.json \ "number").as[Int]}/merge",
           JsObject(
             Seq(
-              //"commit_title" -> JsString(s"Assets branch merged $branchName into master"),
-              //"commit_message" -> JsString("coucou"),
               "merge_method" -> JsString("squash")
             )
           )
