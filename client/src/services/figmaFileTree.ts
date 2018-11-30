@@ -11,5 +11,5 @@ export function listFigmaNodes(fileKey: String): Promise<FigmaNode> {
         status: response.status
       }
     }
-  }).then(json => json as FigmaNode)
+  }).then(json => json.children as FigmaNode)
 }

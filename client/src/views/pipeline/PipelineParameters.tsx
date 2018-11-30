@@ -45,7 +45,7 @@ export default function({ assetName }: Props) {
         <Box mt={5} />
         <Flex width={1}>
           <Box width={1}>
-            <Text mb={2} fontSize={16} fontWeight="medium" >
+            <Text mb={2} fontSize={16} fontWeight="bold">
               Nom du fichier
             </Text>
             <Input placeholder={assetName} onChange={(e) => setForm(Object.assign(form, { nom: e.target.value}))} />
@@ -53,13 +53,16 @@ export default function({ assetName }: Props) {
           <Switch labels={fileFormats} onChange={(value) => setForm(Object.assign(form, { extension: value })) }/>
         </Flex>
         <Box mt={4}>
-          <Text mb={2} fontSize={16} fontWeight="medium">
+          <Text mb={2} fontSize={16} fontWeight="bold">
             Type de transformation
           </Text>
-          <Input onChange={(e) => setForm(Object.assign(form, { type: e.target.value}))}/>
+          <Flex alignItems="center">
+            <Text mr={3}>Echelle</Text>
+            <Input placeholder="1" onChange={(e) => setForm(Object.assign(form, { type: e.target.value}))}/>
+          </Flex>
         </Box>
         <Box mt={4}>
-          <Text mb={2} fontSize={16} fontWeight="medium">
+          <Text mb={2} fontSize={16} fontWeight="bold">
             Dossier de destination
           </Text>
           <Input prefix="image/" onChange={(e) => setForm(Object.assign(form, { dossier: e.target.value}))}/>
