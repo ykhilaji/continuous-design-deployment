@@ -93,6 +93,31 @@ class GithubClient(ws: WSClient, githubToken: String) {
     })
   }
 
+  private def openAndMergePR(owner: String, projectName: String, branchName: String): Future[JsValue] = {
+    githubAuthenticatedPost(
+      s"/repos/$owner/$projectName/pulls",
+      JsObject(
+        Seq(
+          "title" -> JsString(s"Assets branch $branchName into master"),
+          "head" -> JsString(branchName),
+          "base" -> JsString("master")
+        )
+      )
+    ).flatMap(res => {
+        githubAuthenticatedPut(
+          s"/repos/$owner/$projectName/pulls/${(res.json \ "number").as[Int]}/merge",
+          JsObject(
+            Seq(
+              //"commit_title" -> JsString(s"Assets branch merged $branchName into master"),
+              //"commit_message" -> JsString("coucou"),
+              "merge_method" -> JsString("squash")
+            )
+          )
+        )
+      })
+      .map(_.json)
+  }
+
   private def pushAssetFromUrl(
     owner: String,
     projectName: String,
@@ -121,11 +146,24 @@ class GithubClient(ws: WSClient, githubToken: String) {
     githubAuthenticatedGet(s"/repos/$owner/$projectName/branches")
       .map(_.json)
 
-  def doAssetsPR(owner: String, projectName: String, assets: List[PushableAsset]) = {
-//    val branchName = generateBranchName
-//    createBranch(owner, projectName, branchName).flatMap(res => {
-//      assets.map(asset => pushAssetFromUrl(owner, projectName, asset.path, branchName, asset.url))
-//    })
-    ???
+  def doAssetsPR(owner: String, projectName: String, assets: List[PushableAsset]): Future[JsValue] = {
+    val branchName = generateBranchName
+    createBranch(owner, projectName, branchName)
+      .flatMap(res => {
+        Future.sequence(
+          assets.map(
+            asset => {
+              pushAssetFromUrl(
+                owner,
+                projectName,
+                s"${asset.path}/${asset.name}.${asset.extension}",
+                branchName,
+                asset.url
+              )
+            }
+          )
+        )
+      })
+      .flatMap(x => openAndMergePR(owner, projectName, branchName))
   }
 }

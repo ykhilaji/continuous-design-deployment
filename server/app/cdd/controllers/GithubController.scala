@@ -19,7 +19,8 @@ class GithubController(cc: ControllerComponents, ghc: GithubClient) extends Abst
   }
   def doAssetsPR(owner: String, projectName: String) = Action.async(parse.json[List[PushableAsset]]) {
     implicit request =>
-      ghc.doAssetsPR(owner, projectName, request.body)
+      println(request.body)
+      ghc.doAssetsPR(owner, projectName, request.body).map(x => Ok(Json.toJson(x)))
   }
 }
 //    ghc
