@@ -3,7 +3,7 @@ import { FigmaNode } from "../model/figmaNode"
 import { listFigmaNodes } from "./figmaFileTree"
 
 export default function() {
-  const [nodes, setNodes] = useState<FigmaNode[]>([])
+  const [nodes, setNodes] = useState<FigmaNode>({id: "1", name: "loading", type: ""})
 
   useEffect(() => {
     listFigmaNodes().then(res => setNodes(res))
