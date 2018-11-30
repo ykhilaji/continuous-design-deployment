@@ -17,6 +17,7 @@ class FigmaController(
 
   def listImages(fileKey: String, from: Option[Int], to: Option[Int]) = Action.async(parse.json[Seq[Id]]) {
     implicit request =>
+      println(request)
       for {
         documents <- figmaService.assetsDocuments(fileKey)
         assets <- figmaService.assets(fileKey, documents, request.body, from.getOrElse(0), to.getOrElse(20))

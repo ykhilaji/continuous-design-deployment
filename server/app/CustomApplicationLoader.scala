@@ -41,7 +41,7 @@ class CustomComponents(context: ApplicationLoader.Context)
   // executionContexts
   val defaultEc = controllerComponents.executionContext
 
-  override def httpFilters = Seq(csrfFilter, securityHeadersFilter, allowedHostsFilter) ++ MetricsFilter(conf)
+  override def httpFilters = Seq()
 
   // services
   lazy val jsMessages = new jsmessages.JsMessagesFactory(messagesApi).all
