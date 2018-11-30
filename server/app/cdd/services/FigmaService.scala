@@ -12,20 +12,32 @@ class FigmaService(
   config: Configuration
 ) {
   private val figmaURL = "https://api.figma.com/v1"
-
-  def assetsDocuments(fileKey: String)(implicit ec: ExecutionContext): Future[Seq[Document]] =
-    ws.url(s"${figmaURL}/files/${fileKey}")
-      .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)
-      .get()
-      .map { res =>
-        (res.json \ "document")
-          .validate[Document]
-          .asOpt
-          .map { doc =>
-            parseDocument(doc)
-          }
-          .getOrElse(Seq.empty)
+  private val assetsCache = scala.collection.mutable.Map[(String, Seq[Document], Seq[Id], Int, Int), Seq[Asset]]()
+  private val docsCache = scala.collection.mutable.Map[String, Seq[Document]]()
+  def assetsDocuments(fileKey: String)(implicit ec: ExecutionContext): Future[Seq[Document]] = {
+    docsCache.get(fileKey) match {
+      case Some(docs) => {
+        println("DOCS FROM CACHE")
+        Future.successful(docs)
       }
+      case None => {
+        ws.url(s"${figmaURL}/files/${fileKey}")
+          .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)
+          .get()
+          .map { res =>
+            val docs = (res.json \ "document")
+              .validate[Document]
+              .asOpt
+              .map { doc =>
+                parseDocument(doc)
+              }
+              .getOrElse(Seq.empty)
+            docsCache += (fileKey -> docs)
+            docs
+          }
+      }
+    }
+  }
 
   def parseDocument(document: Document): Seq[Document] =
     document.children match {
@@ -36,30 +48,39 @@ class FigmaService(
   def assets(fileKey: String, documents: Seq[Document], ids: Seq[Id], from: Int = 0, to: Int = 20)(
     implicit ec: ExecutionContext
   ): Future[Seq[Asset]] = {
-    val strIds = ids.map(_.id)
-    val idsComas = documents.map(_.id).filter(x => strIds.contains(x)).distinct.slice(from, to).mkString(",")
-    val url = s"${figmaURL}/images/${fileKey}?ids=${idsComas}"
-    ws.url(url)
-      .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)
-      .get()
-      .map(res => {
-        val assetsResponse: Seq[AssetResponse] = (res.json \ "images").as[JsObject].fields.flatMap {
-          case (fieldName, value) => {
-            value.validate[String].asOpt match {
-              case Some(url) => Seq(AssetResponse(fieldName, url))
-              case None      => Seq.empty
+    assetsCache.get((fileKey, documents, ids, from, to)) match {
+      case Some(assets) => {
+        println("ASSETS FROM CACHE")
+        Future.successful(assets)
+      }
+      case None => {
+        val strIds = ids.map(_.id)
+        val idsComas = documents.map(_.id).filter(x => strIds.contains(x)).distinct.slice(from, to).mkString(",")
+        val url = s"${figmaURL}/images/${fileKey}?ids=${idsComas}"
+        ws.url(url)
+          .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)
+          .get()
+          .map(res => {
+            val assetsResponse: Seq[AssetResponse] = (res.json \ "images").as[JsObject].fields.flatMap {
+              case (fieldName, value) => {
+                value.validate[String].asOpt match {
+                  case Some(url) => Seq(AssetResponse(fieldName, url))
+                  case None      => Seq.empty
+                }
+              }
             }
-
-          }
-        }
-        assetsResponse.map { assetResp =>
-          Asset(
-            assetResp.id,
-            assetResp.url,
-            documents.find(doc => doc.id == assetResp.id).map(doc => doc.name).getOrElse("")
-          )
-        }
-      })
+            val assets = assetsResponse.map { assetResp =>
+              Asset(
+                assetResp.id,
+                assetResp.url,
+                documents.find(doc => doc.id == assetResp.id).map(doc => doc.name).getOrElse("")
+              )
+            }
+            assetsCache += ((fileKey, documents, ids, from, to) -> assets)
+            assets
+          })
+      }
+    }
   }
 
   def fetchAssets(
