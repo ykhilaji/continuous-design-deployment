@@ -3,4 +3,7 @@ export interface FigmaNode {
   name: string
   type: string
   children?: FigmaNode[]
+  active?: boolean
+  toggled?: boolean
 }
+

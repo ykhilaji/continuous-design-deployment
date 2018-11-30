@@ -1,6 +1,6 @@
 import { FigmaNode } from "../model/figmaNode"
 
-export function listFigmaNodes(fileKey: String): Promise<FigmaNode> {
+export function listFigmaNodes(fileKey: string): Promise<FigmaNode> {
   return fetch(`/api/assets/documentTree/${fileKey}`)
   .then(response => {
     if (response.ok) {
@@ -11,5 +11,5 @@ export function listFigmaNodes(fileKey: String): Promise<FigmaNode> {
         status: response.status
       }
     }
-  }).then(json => json as FigmaNode)
+  }).then(json => json.children as FigmaNode)
 }

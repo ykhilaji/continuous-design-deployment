@@ -9,19 +9,27 @@ export type SwitchType = {
 
 interface Props {
   labels: SwitchType[]
+  onChange?: (value: string) => void
 }
 
-const Switch = ({ labels }: Props) => {
+const Switch = ({ labels, onChange }: Props) => {
   const [activeLabel, setActiveLabel] = useState(labels[0])
   if (labels.length === 0) {
     return null
   }
 
-  return <Box>
-      {labels.map(label => {
-        const handleClick = () => setActiveLabel(label)
+  const handleChange = (label: SwitchType) => {
+    setActiveLabel(label)
+    onChange && onChange(label.id)
+  } 
 
-        return <SwitchButton 
+  return <Box 
+    css={{ display: 'flex'}}
+  >
+      {labels.map(label => {
+        const handleClick = () => handleChange(label)
+
+        return <SwitchButton
           onClick={handleClick}
           active={label.id === activeLabel.id}
           bg={label.bg}
@@ -36,5 +44,5 @@ export default Switch
 
 function SwitchButton({ name, bg, active = false, key, onClick }: { name: string, bg: string, active: boolean, key: string, onClick: () => void }) {
 
-  return <Button key={key} bg={active ? "#1e76fc" : bg} onClick={onClick}>{name}</Button>
+  return <Button css={{margin: '0 10px'}} key={key} bg={active ? "#1e76fc" : bg} onClick={onClick}>{name}</Button>
 }
