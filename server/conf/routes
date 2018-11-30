@@ -2,10 +2,9 @@ GET     /api/repos                                              cdd.controllers.
 GET     /api/repos/:owner/:projectName                          cdd.controllers.GithubController.getRepo(owner: String, projectName: String)
 GET     /api/repos/:owner/:projectName/branches                 cdd.controllers.GithubController.getBranches(owner: String, projectName: String)
 
-GET     /api/images/:fileKey                                    cdd.controllers.FigmaController.listImages(fileKey: String, from: Option[Int], to: Option[Int])
+POST    /api/images/:fileKey                                    cdd.controllers.FigmaController.listImages(fileKey: String, from: Option[Int], to: Option[Int])
 GET     /api/assets/documentTree/:fileKey                       cdd.controllers.FigmaController.documentTree(fileKey: String)
 GET     /api/assets/:fileKey                                    cdd.controllers.FigmaController.assets(fileKey: String, ids: Option[Seq[String]], scale: Option[Double], format: Option[String])
-POST    /api/:owner/:projectName/assets                         cdd.controllers.GithubController.doAssetsPR(owner: String, projectName: String)
 
 
 # Map static resources from the /public folder to the /assets URL path
