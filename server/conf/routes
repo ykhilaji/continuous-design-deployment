@@ -1,12 +1,12 @@
-GET     /api/repos                                  cdd.controllers.GithubController.listRepos
-GET     /api/repos/:owner/:projectName              cdd.controllers.GithubController.getRepo(owner: String, projectName: String)
-GET     /api/repos/:owner/:projectName/branches     cdd.controllers.GithubController.getBranches(owner: String, projectName: String)
+GET     /api/repos                                              cdd.controllers.GithubController.listRepos
+GET     /api/repos/:owner/:projectName                          cdd.controllers.GithubController.getRepo(owner: String, projectName: String)
+GET     /api/repos/:owner/:projectName/branches                 cdd.controllers.GithubController.getBranches(owner: String, projectName: String)
 
 GET     /api/assets/:fileKey                        cdd.controllers.FigmaController.listImages(fileKey: String, from: Option[Int], to: Option[Int])
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /favicon.ico                                core.controllers.XAssets.favicon
-GET     /assets/*file                               core.controllers.XAssets.versioned(path="/public", file: controllers.Assets.Asset)
+GET     /favicon.ico                                            core.controllers.XAssets.favicon
+GET     /assets/*file                                           core.controllers.XAssets.versioned(path="/public", file: controllers.Assets.Asset)
 
 # Application's entry point
-GET     /$any<.*>                                   front.StateController.index(any: String)
+GET     /$any<.*>                                               front.StateController.index(any: String)

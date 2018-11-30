@@ -1,8 +1,9 @@
 package cdd.controllers
 
 import cdd.clients.GithubClient
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json}
 import play.api.mvc.{AbstractController, ControllerComponents}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class GithubController(cc: ControllerComponents, ghc: GithubClient) extends AbstractController(cc) {

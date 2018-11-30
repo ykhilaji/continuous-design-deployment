@@ -1,18 +1,22 @@
 import React from "react"
-import { Flex, Text, Image } from "rebass"
-import Container from "./Container"
+import { Flex, Text, Image, Box } from "rebass"
+import { Link } from "react-router-dom"
 
 export default function() {
   return (
-    <Flex bg="lightgrey" color="black" alignItems="center" py={1} px={2}>
-      <Container>
+    <Flex color="black" alignItems="center" py={1} mt={4}>
+      <Link to="/">
         <Image
-          width={20}
-          src="https://icon.now.sh/keyboard_backspace"
+          width={24}
+          height={24}
+          src="https://icon.now.sh/arrow_back"
           alt="arrow icon"
         />
-        <Text p={2}>Project Name</Text>
-      </Container>
+      </Link>
+      <Text p={2} fontWeight="bold" fontSize={28}>
+        Project Name
+      </Text>
+      <Box mx="auto" />
     </Flex>
   )
 }
