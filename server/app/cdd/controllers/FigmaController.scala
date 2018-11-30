@@ -1,24 +1,27 @@
 package cdd.controllers
 
+import cdd.clients.GithubClient
+import cdd.models.Id
 import play.api.mvc._
-
 import cdd.services.FigmaService
-
 import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class FigmaController(
   cc: ControllerComponents,
-  figmaService: FigmaService
+  figmaService: FigmaService,
+  githubClient: GithubClient
 )(implicit ec: ExecutionContext)
     extends AbstractController(cc) {
 
-  def listImages(fileKey: String, from: Option[Int], to: Option[Int]) = Action.async { implicit request =>
-    for {
-      documents <- figmaService.assetsDocuments(fileKey)
-      assets <- figmaService.assets(fileKey, documents, from.getOrElse(0), to.getOrElse(20))
-    } yield Ok(Json.toJson(assets))
+  def listImages(fileKey: String, from: Option[Int], to: Option[Int]) = Action.async(parse.json[Seq[Id]]) {
+    implicit request =>
+      for {
+        documents <- figmaService.assetsDocuments(fileKey)
+        assets <- figmaService.assets(fileKey, documents, request.body, from.getOrElse(0), to.getOrElse(20))
+        pr <- githubClient.doAssetsPR("zengularity", "continuous-design-deployment", assets.toList.map(_.toPushable))
+      } yield Ok(Json.toJson(pr))
   }
 
   def documentTree(fileKey: String) = Action.async { implicit request =>

@@ -57,7 +57,7 @@ class CustomComponents(context: ApplicationLoader.Context)
   lazy val router: Router = new Routes(
     httpErrorHandler,
     new cdd.controllers.GithubController(controllerComponents, githubClient),
-    new cdd.controllers.FigmaController(controllerComponents, figmaService),
+    new cdd.controllers.FigmaController(controllerComponents, figmaService, githubClient),
     new core.controllers.XAssets(environment, httpErrorHandler, assetsMetadata, controllerComponents),
     new front.StateController(controllerComponents)
     // new user.controllers.HomeController(controllerComponents, jsMessages)
