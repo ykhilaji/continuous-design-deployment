@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, Text, Flex } from "rebass"
+import { Text, Flex } from "rebass"
 
 interface Props {
   num: number

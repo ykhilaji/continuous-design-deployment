@@ -1,7 +1,6 @@
 import React from "react"
 import { Flex, Text, Image, Box } from "rebass"
 import { Link } from "react-router-dom"
-import Container from "./Container"
 
 export default function() {
   return (
