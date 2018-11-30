@@ -14,7 +14,7 @@ const PipelineIndex = () => {
       </Box>
       {
         true
-        ? <PipelineParameters assetName={node.name} />
+        ? <PipelineParameters assetName={node.name} ids={[{id: node.id}]} />
         : <EmptyPipeline />
       }
     </Flex>

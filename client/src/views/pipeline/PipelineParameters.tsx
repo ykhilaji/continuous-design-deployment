@@ -2,9 +2,16 @@ import React, { useState } from "react"
 import { Flex, Heading, Text, Box , Button} from "rebass"
 import Input from "../../components/Input"
 import Switch, { SwitchType } from "../../components/Switch"
+import { pushPR } from "../../services/figmaPushApi";
 
+const fileKey = 'RqrQf45ensLalBZWh4Bw6o6Q'
 interface Props {
   assetName: string
+  ids: Id[]
+}
+
+interface Id {
+  id: string
 }
 
 const fileFormats: SwitchType[] = [
@@ -25,14 +32,13 @@ const fileFormats: SwitchType[] = [
   },
 ]
 
-export default function({ assetName }: Props) {
+export default function({ assetName, ids }: Props) {
   const [form, setForm] = useState({
     nom: "",
     type: "",
     dossier: "",
     extension: ""
   })
-  console.dir(form)
   return (
     <Flex width={1} flexDirection="column" p={3}>
       <Heading fontWeight="normal" fontSize={24}>
@@ -69,7 +75,7 @@ export default function({ assetName }: Props) {
         </Box>
         <Box css={{ display: 'flex', alignItems: 'flex-end'}}>
           <Button 
-            onClick={() => console.dir('api call')}
+            onClick={() => pushPR(fileKey, ids)}
             css={{marginTop: '30px'}}
           >Valider</Button>
         </Box>
