@@ -13,3 +13,9 @@ case class AssetResponse(id: String, url: String)
 object AssetResponse {
   implicit val format: Format[AssetResponse] = Json.format[AssetResponse]
 }
+
+case class UpdateAsset(branch: String, content: String)
+
+object UpdateAsset {
+  implicit val cfFormat: Format[UpdateAsset] = Json.format[UpdateAsset]
+}

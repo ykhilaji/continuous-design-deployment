@@ -1,9 +1,6 @@
 GET     /api/repos                                              cdd.controllers.GithubController.listRepos
 GET     /api/repos/:owner/:projectName                          cdd.controllers.GithubController.getRepo(owner: String, projectName: String)
 GET     /api/repos/:owner/:projectName/branches                 cdd.controllers.GithubController.getBranches(owner: String, projectName: String)
-POST    /api/repos/:owner/:projectName/branches/:branchName     cdd.controllers.GithubController.createBranch(owner: String, projectName: String, branchName: String)
-GET     /api/repos/:owner/:projectName/contents/*path           cdd.controllers.GithubController.getFile(owner: String, projectName: String, path: String, branch: Option[String])
-PUT     /api/repos/:owner/:projectName/contents/*path           cdd.controllers.GithubController.updateAsset(owner: String, projectName: String, path: String)
 
 GET     /api/assets/:fileKey                 cdd.controllers.FigmaController.listImages(fileKey: String)
 
