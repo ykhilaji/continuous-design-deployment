@@ -2,7 +2,9 @@ package cdd.models
 
 import play.api.libs.json.{Format, Json}
 
-case class Asset(id: String, url: String, name: String)
+case class Asset(id: String, url: String, name: String) {
+  def toPushable: PushableAsset = PushableAsset(name.replace(' ', '-').toLowerCase, "png", "images", url)
+}
 
 object Asset {
   implicit val format: Format[Asset] = Json.format[Asset]
@@ -24,4 +26,10 @@ case class PushableAsset(name: String, extension: String, path: String, url: Str
 
 object PushableAsset {
   implicit val paf: Format[PushableAsset] = Json.format[PushableAsset]
+}
+
+case class Id(id: String)
+
+object Id {
+  implicit val idf: Format[Id] = Json.format[Id]
 }

@@ -4,9 +4,8 @@ import play.api.libs.ws.WSClient
 import play.api.libs.json.{Format, JsObject, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import core.utils.Configuration
-import cdd.models.{Asset, AssetResponse}
+import cdd.models.{Asset, AssetResponse, Id}
 
 class FigmaService(
   ws: WSClient,
@@ -34,10 +33,11 @@ class FigmaService(
       case None           => Seq(document)
     }
 
-  def assets(fileKey: String, documents: Seq[Document], from: Int = 0, to: Int = 20)(
+  def assets(fileKey: String, documents: Seq[Document], ids: Seq[Id], from: Int = 0, to: Int = 20)(
     implicit ec: ExecutionContext
   ): Future[Seq[Asset]] = {
-    val idsComas = documents.map(_.id).slice(from, to).mkString(",")
+    val strIds = ids.map(_.id)
+    val idsComas = documents.map(_.id).filter(x => strIds.contains(x)).distinct.slice(from, to).mkString(",")
     val url = s"${figmaURL}/images/${fileKey}?ids=${idsComas}"
     ws.url(url)
       .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)

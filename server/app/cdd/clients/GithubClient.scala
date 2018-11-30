@@ -132,6 +132,14 @@ class GithubClient(ws: WSClient, githubToken: String) {
       })
   }
 
+  private def seqFutures[T, U](items: TraversableOnce[T])(yourfunction: T => Future[U]): Future[List[U]] = {
+    items.foldLeft(Future.successful[List[U]](Nil)) { (f, item) =>
+      f.flatMap { x =>
+        yourfunction(item).map(_ :: x)
+      }
+    } map (_.reverse)
+  }
+
   def repos =
     githubAuthenticatedGet("/user/repos")
       .map(_.json)
@@ -148,18 +156,16 @@ class GithubClient(ws: WSClient, githubToken: String) {
     val branchName = generateBranchName
     createBranch(owner, projectName, branchName)
       .flatMap(res => {
-        Future.sequence(
-          assets.map(
-            asset => {
-              pushAssetFromUrl(
-                owner,
-                projectName,
-                s"${asset.path}/${asset.name}.${asset.extension}",
-                branchName,
-                asset.url
-              )
-            }
-          )
+        seqFutures(assets)(
+          asset => {
+            pushAssetFromUrl(
+              owner,
+              projectName,
+              s"${asset.path}/${asset.name}.${asset.extension}",
+              branchName,
+              asset.url
+            )
+          }
         )
       })
       .flatMap(x => openAndMergePR(owner, projectName, branchName))
