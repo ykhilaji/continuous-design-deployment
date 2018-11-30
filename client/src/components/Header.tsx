@@ -22,9 +22,9 @@ export default function() {
         <Flex alignItems="center" width={1} mt={3}>
           <Image height={32} src={Logo} />
           <Box mx="auto" />
-          <Button bg="#5B5F60" css={{ borderRadius: "10px" }}>
+          {false && <Button bg="#5B5F60" css={{ borderRadius: "10px" }}>
             Nouveau Projet
-          </Button>
+          </Button>}
         </Flex>
         <Route path="/:projectId" component={NavigationBar} />
       </Container>

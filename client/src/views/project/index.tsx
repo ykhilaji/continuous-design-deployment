@@ -1,11 +1,10 @@
 import React from "react"
-
-import FormStepperBar from "../../components/FormStepper/FormStepperBar"
+import PipelineIndex from "../pipeline"
 
 interface Props {}
 
 export default function(props: Props) {
   return <>
-     <FormStepperBar /> 
+     <PipelineIndex /> 
     </>
 }
