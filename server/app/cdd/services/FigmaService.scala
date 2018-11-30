@@ -1,7 +1,7 @@
 package cdd.services
 
 import play.api.libs.ws.WSClient
-import play.api.libs.json.{Format, JsObject, JsString, JsValue, Json}
+import play.api.libs.json.{Format, JsObject, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -18,7 +18,15 @@ class FigmaService(
     ws.url(s"${figmaURL}/files/${fileKey}")
       .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)
       .get()
-      .map(res => parseDocument((res.json \ "document").as[Document]))
+      .map { res =>
+        (res.json \ "document")
+          .validate[Document]
+          .asOpt
+          .map { doc =>
+            parseDocument(doc)
+          }
+          .getOrElse(Seq.empty)
+      }
 
   def parseDocument(document: Document): Seq[Document] =
     document.children match {
@@ -35,17 +43,22 @@ class FigmaService(
       .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)
       .get()
       .map(res => {
-        val assetsResponse: Seq[AssetResponse] = (res.json \ "images").as[JsObject].fields.map {
-          case (fieldName, value) => AssetResponse(fieldName, value.as[String])
+        val assetsResponse: Seq[AssetResponse] = (res.json \ "images").as[JsObject].fields.flatMap {
+          case (fieldName, value) => {
+            value.validate[String].asOpt match {
+              case Some(url) => Seq(AssetResponse(fieldName, url))
+              case None      => Seq.empty
+            }
+
+          }
         }
-        assetsResponse.map(
-          assetResp =>
-            Asset(
-              assetResp.id,
-              assetResp.url,
-              documents.find(doc => doc.id == assetResp.id).map(doc => doc.name).getOrElse("")
+        assetsResponse.map { assetResp =>
+          Asset(
+            assetResp.id,
+            assetResp.url,
+            documents.find(doc => doc.id == assetResp.id).map(doc => doc.name).getOrElse("")
           )
-        )
+        }
       })
   }
 }
