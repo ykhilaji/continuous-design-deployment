@@ -38,7 +38,7 @@ export default function({ assetName }: Props) {
         <Box mt={5} />
         <Flex width={1}>
           <Box width={1}>
-            <Text mb={2} fontSize={16} fontWeight="medium">
+            <Text mb={2} fontSize={16} fontWeight="bold">
               Nom du fichier
             </Text>
             <Input placeholder={assetName} />
@@ -46,13 +46,16 @@ export default function({ assetName }: Props) {
           <Switch labels={fileFormats} />
         </Flex>
         <Box mt={4}>
-          <Text mb={2} fontSize={16} fontWeight="medium">
+          <Text mb={2} fontSize={16} fontWeight="bold">
             Type de transformation
           </Text>
-          <Input />
+          <Flex alignItems="center">
+            <Text mr={3}>Echelle</Text>
+            <Input placeholder="1"/>
+          </Flex>
         </Box>
         <Box mt={4}>
-          <Text mb={2} fontSize={16} fontWeight="medium">
+          <Text mb={2} fontSize={16} fontWeight="bold">
             Dossier de destination
           </Text>
           <Input prefix="image/" />
