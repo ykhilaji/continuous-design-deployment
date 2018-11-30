@@ -12,8 +12,8 @@ import scala.concurrent.Future
 import scala.util.Random
 
 class GithubClient(ws: WSClient, githubToken: String) {
-  val token = githubToken
-  val baseUrl = "https://api.github.com"
+  private val token = githubToken
+  private val baseUrl = "https://api.github.com"
 
   private def generateBranchName: String = {
     val randomString: String = Random.alphanumeric.take(10).mkString
