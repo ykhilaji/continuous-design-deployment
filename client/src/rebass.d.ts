@@ -14,6 +14,8 @@ declare module "rebass" {
   export interface BaseProps<C> extends React.ClassAttributes<C> {
     className?: string
     as?: string
+    href?: string,
+    onClick?: (e: Event) => any
   }
 
   export interface SpaceProps<C> extends BaseProps<C> {

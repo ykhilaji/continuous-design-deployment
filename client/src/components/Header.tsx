@@ -1,5 +1,5 @@
 import React from "react"
-import { Flex, Text, Box, Image, Button } from "rebass"
+import { Flex, Box, Image, Button } from "rebass"
 import { Route } from "react-router-dom"
 
 import Container from "./Container"
