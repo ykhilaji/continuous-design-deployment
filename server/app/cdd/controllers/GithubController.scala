@@ -1,6 +1,7 @@
 package cdd.controllers
 
 import cdd.clients.GithubClient
+import cdd.models.PushableAsset
 import play.api.libs.json.{Format, Json}
 import play.api.mvc.{AbstractController, ControllerComponents}
 
@@ -16,4 +17,17 @@ class GithubController(cc: ControllerComponents, ghc: GithubClient) extends Abst
   def getBranches(owner: String, projectName: String) = Action.async {
     ghc.branches(owner, projectName).map(x => Ok(Json.toJson(x)))
   }
+  def doAssetsPR(owner: String, projectName: String) = Action.async(parse.json[List[PushableAsset]]) {
+    implicit request =>
+      ghc.doAssetsPR(owner, projectName, request.body)
+  }
 }
+//    ghc
+//      .pushAssetFromUrl(
+//        "zengularity",
+//        "continuous-design-deployment",
+//        "images/darealdondoudouaaaaaaa.png",
+//        "test",
+//        "https://pngimage.net/wp-content/uploads/2018/06/rondoudou-png-3.png"
+//      )
+//      .map(x => Ok(x))
