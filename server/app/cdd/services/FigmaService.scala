@@ -61,9 +61,56 @@ class FigmaService(
         }
       })
   }
+
+  def fetchAssets(
+    fileKey: String,
+    ids: Seq[String],
+    scale: Option[Double] = None,
+    format: Option[String] = None
+  )(implicit ec: ExecutionContext) = {
+    val idsComas = ids.mkString(",")
+    val baseUrl = s"${figmaURL}/images/${fileKey}?ids=${idsComas}"
+    val url = (scale, format) match {
+      case (Some(s), Some(f)) => s"${baseUrl}&scale=${s}&format=${f}"
+      case (Some(s), _)       => s"${baseUrl}&scale=${s}"
+      case (_, Some(f))       => s"${baseUrl}&format=${f}"
+      case _                  => baseUrl
+    }
+
+    ws.url(url)
+      .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)
+      .get()
+      .map(res => {
+        (res.json \ "images")
+          .as[JsObject]
+          .fields
+          .flatMap {
+            case (fieldName, value) => {
+              value.validate[String].asOpt match {
+                case Some(url) => Seq(AssetResponse(fieldName, url))
+                case None      => Seq.empty
+              }
+
+            }
+          }
+      })
+  }
+
+  def documentTree(fileKey: String)(
+    implicit ec: ExecutionContext
+  ): Future[Option[Document]] = {
+    ws.url(s"${figmaURL}/files/${fileKey}")
+      .addHttpHeaders("X-Figma-Token" -> config.getString("cdd.figma.token").required)
+      .get()
+      .map { res =>
+        (res.json \ "document")
+          .validate[Document]
+          .asOpt
+      }
+  }
 }
 
-case class Document(name: String, id: String, children: Option[Seq[Document]])
+case class Document(name: String, id: String, `type`: Option[String], children: Option[Seq[Document]])
 
 object Document {
   implicit val format: Format[Document] = Json.format[Document]
